@@ -19,7 +19,13 @@ namespace BrokenLinkChecker.Tests
         public static ExtentTest exTest;
         public TestContext TestContext { get; set; }
 
+        public static string TestUrl = "https://wiki.hrblock.net/DevOps/WebHome";
 
+        //Pass "" to check all links
+        public static string TestUrlStartsWith = "https://wiki";
+
+        //Mention Email Recipients sepearted by ";"
+        public static string EmailRecipients = "sanah.shaz@hrblock.com";
 
 
 
@@ -43,7 +49,7 @@ namespace BrokenLinkChecker.Tests
         {
             LinkCheckerBase objLC = new LinkCheckerBase();
             objLC.LaunchBrowser("chrome");
-            objLC.NavigateToURL("https://wiki.hrblock.net/DevOps/WebHome");
+            objLC.NavigateToURL(TestUrl);
 
             List<string> arrFoundLinks = new List<string>();
             var arrFoundLinksResults = new ConcurrentBag<string>();
@@ -52,10 +58,19 @@ namespace BrokenLinkChecker.Tests
             {
                 try
                 {
-                  //  if (LinkItem.StartsWith("https://wiki"))
-                  //  {
+                    if(TestUrlStartsWith != "")
+                    {
+                        if(LinkItem.StartsWith(TestUrlStartsWith))
+                        { 
+                            arrFoundLinks.Add(LinkItem);
+                        }
+                    }
+                    else
+                    {
                         arrFoundLinks.Add(LinkItem);
-                  //  }
+                    }
+
+
                 }
                 catch (Exception)
                 {
@@ -115,9 +130,6 @@ namespace BrokenLinkChecker.Tests
 
             }
 
-               GenericHelper dd = new GenericHelper();
-                 dd.sendEMailThroughOUTLOOK(RunFile);
-
         }
 
         [TestCleanup]
@@ -128,6 +140,9 @@ namespace BrokenLinkChecker.Tests
             objLC.CloseBrowser();
             extent.Flush();
             TestContext.AddResultFile(RunFile);
+
+            GenericHelper objGen = new GenericHelper();
+            objGen.sendEMailThroughOUTLOOK(RunFile, EmailRecipients);
 
 
         }

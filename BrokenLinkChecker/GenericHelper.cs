@@ -9,7 +9,7 @@ namespace BrokenLinkChecker
     public class GenericHelper
     {
 
-        public void sendEMailThroughOUTLOOK(string filePath)
+        public void sendEMailThroughOUTLOOK(string filePath, string emailRecipients)
         {
             try
             {
@@ -30,8 +30,14 @@ namespace BrokenLinkChecker
                 oMsg.Subject = "Devops wiki broken link checker : "+DateTime.Now.ToShortDateString();
                 // Add a recipient.
                 Outlook.Recipients oRecips = (Outlook.Recipients)oMsg.Recipients;
+                Outlook.Recipient oRecip =null;
+               foreach (string recp in emailRecipients.Split(';'))
+                {
+                    oRecip = (Outlook.Recipient)oRecips.Add(recp);
+                }
+
                 // Change the recipient in the next line if necessary.
-                Outlook.Recipient oRecip = (Outlook.Recipient)oRecips.Add("sanah.shaz@hrblock.com");
+                
                 oRecip.Resolve();
                 // Send.
                 oMsg.Send();
